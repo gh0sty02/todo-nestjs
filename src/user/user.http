@@ -1,0 +1,18 @@
+GET http://localhost:5000/user
+
+######
+POST http://localhost:5000/user
+Content-Type: application/json
+
+{
+    "name" : "Pranay",
+    "age" : 20
+} 
+
+
+######
+GET http://localhost:5000/user/all
+
+
+###
+GET http://localhost:5000/user/2
