@@ -1,0 +1,10 @@
+GET http://localhost:5000/todo/all
+
+###
+POST http://localhost:5000/todo
+Content-Type: application/json
+
+{
+    "title": "Buy milk",
+    
+} 
