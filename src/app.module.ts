@@ -8,9 +8,10 @@ import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
 import { PrismaService } from './prisma/prisma.service';
 import { TodoService } from './todo/todo.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [TodoModule, UserModule],
+  imports: [TodoModule, UserModule, AuthModule],
   controllers: [AppController, TodosController, UserController],
   providers: [AppService, UserService, TodoService, PrismaService],
 })

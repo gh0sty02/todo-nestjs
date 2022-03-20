@@ -11,27 +11,30 @@ import {
   Post,
   Query,
   Redirect,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
-import { CreateUserDTO } from './dto/CreateUser.dto';
+import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get()
-  getHello(): string {
-    return 'User says hello';
-  }
-
   @Post()
-  async createUser(@Body() body: Prisma.UserCreateInput): Promise<User> {
+  async register(@Body() body: Prisma.UserCreateInput): Promise<User> {
     try {
       return this.userService.create(body);
-    } catch (err) {
-      throw err;
+    } catch (e) {
+      throw e;
     }
+  }
+
+  @UseGuards(LocalAuthGuard)
+  @Post('login')
+  async login(@Request() req: any) {
+    return req;
   }
 
   @Get('/all')
@@ -45,9 +48,9 @@ export class UserController {
     return users;
   }
 
-  @Get('/:id')
-  async getUser(@Param('id') id: string): Promise<User> {
-    const user = await this.userService.getUser(Number(id));
+  @Get('/:email')
+  async getUser(@Param('email') email: string): Promise<User> {
+    const user = await this.userService.findUser(email);
     if (!user) {
       throw new NotFoundException('User not found');
     }
