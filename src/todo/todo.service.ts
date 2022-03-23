@@ -1,5 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Req, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { Prisma, Todo } from '@prisma/client';
+import { RequestWithUser } from 'src/auth/requestWithUser.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTodoDTO } from './dto/createTodo.dto';
 
@@ -17,7 +19,7 @@ export class TodoService {
     });
   }
 
-  async deleteTodo(id: number) {
+  async deleteTodo(id: string) {
     try {
       return this.prisma.todo.delete({ where: { id } });
     } catch (error) {
@@ -25,12 +27,12 @@ export class TodoService {
     }
   }
 
-  async updateTodo(id: number, todo: Prisma.TodoUpdateInput) {
+  async updateTodo(id: string) {
     try {
       return this.prisma.todo.update({
         where: { id },
         data: {
-          ...todo,
+          done: true,
         },
       });
     } catch (error) {

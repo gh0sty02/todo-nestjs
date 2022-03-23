@@ -7,9 +7,13 @@ import {
   Param,
   Patch,
   Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { Prisma, Todo } from '@prisma/client';
-import { CreateTodoDTO } from './dto/createTodo.dto';
+import JwtAuthGuard from 'src/auth/jwt-auth.guard';
+import { RequestWithUser } from 'src/auth/requestWithUser.interface';
 import { TodoService } from './todo.service';
 
 @Controller('todo')
@@ -25,23 +29,22 @@ export class TodosController {
     return todos;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async createTodo(
     @Body() body: Prisma.TodoUncheckedCreateInput,
+    @Req() req: RequestWithUser,
   ): Promise<Todo> {
-    return this.todoService.createTodo(body);
+    return this.todoService.createTodo({ ...body, userId: req.user.id });
   }
 
   @Delete('/:id')
   async deleteTodo(@Param('id') id: string) {
-    return this.todoService.deleteTodo(Number(id));
+    return this.todoService.deleteTodo(id);
   }
 
-  @Patch('/:id')
-  async updateTodo(
-    @Param('id') id: string,
-    @Body() body: Prisma.TodoUpdateInput,
-  ) {
-    return this.todoService.updateTodo(Number(id), body);
+  @Post('/:id')
+  async updateTodoToCompleted(@Param('id') id: string) {
+    return this.todoService.updateTodo(id);
   }
 }
